@@ -23,6 +23,26 @@ const Tree = (props) => {
 };
 
 const draw = function() {
+  /**
+   * 
+   * Needs defining:
+   *  - margin object, 
+   *  - width, height,
+   *  - center, focus,
+   *  - duration, 
+   *  - node dimensions,
+   *  - root element
+   *  *  *
+   *  - svg node,
+   *  - tree node ("treemap"),
+   *  - 
+   *  *  *
+   *  Needed methods:
+   *  - zoom(),
+   *  - collapse(),
+   *  - getText(),
+   *  - wrap() <-- 
+   */
 	const width = 500,
 		height = 833;
 
