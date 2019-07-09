@@ -29,37 +29,38 @@ import * as d3 from 'd3';
  *  - ??
  */
 const Tree = (props) => {
-	console.log(props);
+	console.log(props.items);
 	useEffect(
 		() => {
 			d3.select('.tree > *').remove();
 			// draw(props);
 		},
-		[ props.data.length ]
+		[ JSON.stringify(props.items) ]
+		// [ props.data.length ]
 	);
 	return <div className="tree" />;
 };
 
 const draw = function(props) {
 	/**
-   * 
+   *
    * Needs defining:
-   *  - margin object, 
+   *  - margin object,
    *  - width, height,
    *  - center, focus,
-   *  - duration, 
+   *  - duration,
    *  - node dimensions,
    *  - root element
    *  *  *
    *  - svg node,
    *  - tree node ("treemap"),
-   *  - 
+   *  -
    *  *  *
    *  Needed methods:
    *  - zoom(),
    *  - collapse(),
    *  - getText(),
-   *  - wrap() <-- 
+   *  - wrap() <--
    */
 	const margin = { top: 20, right: 20, left: 20, bottom: 20 };
 	const width = 833 - margin.right - margin.left,
@@ -87,7 +88,7 @@ const draw = function(props) {
 			return d.y;
 		});
 
-	root = d3.hierarchy(data, function(d) {
+	root = d3.hierarchy(props.items, function(d) {
 		return d.children;
 	});
 	root.x0 = height / 2;
@@ -153,7 +154,7 @@ const draw = function(props) {
 			.attr('cursor', 'pointer');
 
 		/**
-     * 
+     *
      */
 		let nodeExit = node
 			.exit()
@@ -169,7 +170,7 @@ const draw = function(props) {
 		nodeExit.select('text').style('fill-opacity', 1e-6);
 
 		/**
-     * 
+     *
      */
 		let link = svg.selectAll('path.link').data(links, function(d) {
 			return d.id;
@@ -181,7 +182,7 @@ const draw = function(props) {
 		});
 
 		/**
-     * 
+     *
      */
 		let linkUpdate = linkEnter.merge(link);
 
