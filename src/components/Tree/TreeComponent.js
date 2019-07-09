@@ -20,16 +20,14 @@ class TreeComponent extends Component {
 	}
 
 	componentDidMount() {
-		console.log(Tree);
-
-		console.log('mountain');
+		console.log(Tree.tree);
 	}
 
 	render() {
 		return (
-			<React.Fragment style={styles.container} className="tree-component-container" ref={this.containerRef}>
+			<div className="tree-component-container" style={styles.container} ref={this.containerRef}>
 				Tree Component
-			</React.Fragment>
+			</div>
 		);
 	}
 }
