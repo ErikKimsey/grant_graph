@@ -3,7 +3,24 @@
 import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 
-console.log(d3);
+const data = {
+	name: 'Eric D',
+	children: [
+		{
+			name: 'Erik L',
+			children: [
+				{
+					name: 'Amon',
+					children: [ { name: 'Rabert' } ]
+				}
+			]
+		},
+		{
+			name: 'Isaac J',
+			children: [ { name: 'Scrooby' } ]
+		}
+	]
+};
 
 /**
  * Props:
@@ -23,7 +40,7 @@ const Tree = (props) => {
 };
 
 const draw = function() {
-  /**
+	/**
    * 
    * Needs defining:
    *  - margin object, 
@@ -43,15 +60,20 @@ const draw = function() {
    *  - getText(),
    *  - wrap() <-- 
    */
-	const width = 500,
-		height = 833;
+	const margin = { top: 20, right: 20, left: 20, bottom: 20 };
+	const width = 833 - margin.right - margin.left,
+		height = 500 - margin.top - margin.bottom;
 
 	let i = 0,
 		duration = 750,
 		root;
 
 	let svg = d3.select('.tree-component-container').append('svg');
-	console.log(svg);
+	svg
+		.attr('width', width)
+		.attr('height', height)
+		.append('g')
+		.attr('transform', `translate(${margin.left},${margin.top})`);
 
 	const tree = d3.tree().size([ height, width ]);
 
@@ -63,9 +85,27 @@ const draw = function() {
 		.y(function(d) {
 			return d.y;
 		});
-	// const diagonal = d3.linkHorizontal().projection(function(d) {
-	// 	return [ d.y, d.x ];
-	// });
+
+	root = d3.hierarchy(data, function(d) {
+		return d.children;
+	});
+	root.x0 = height / 2;
+	root.y0 = 0;
+
+	root.children.forEach(collapse);
+
+	function collapse(d) {
+		if (d.childre) {
+			d._children = d.children;
+			d._children.forEach(collapse);
+			d.children = null;
+		}
+	}
+
+	function update(source) {
+		let data = tree(root);
+		let nodes = tree.descendents();
+	}
 
 	return {
 		width: width,
