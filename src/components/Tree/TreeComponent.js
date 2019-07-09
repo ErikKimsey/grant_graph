@@ -14,19 +14,19 @@ class TreeComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			data: null
+			data: []
 		};
 		this.containerRef = React.createRef();
 	}
 
 	componentDidMount() {
-		console.log(Tree.tree);
+		console.log('mointain');
 	}
 
 	render() {
 		return (
 			<div className="tree-component-container" style={styles.container} ref={this.containerRef}>
-				Tree Component
+				<Tree items={this.state.data} />
 			</div>
 		);
 	}

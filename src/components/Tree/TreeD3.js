@@ -1,14 +1,23 @@
+// https://bl.ocks.org/denisemauldin/2b42a8b38c9b04247a7052c9b503e6e2
+
+import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 
 console.log(d3);
 
+/**
+ * Props:
+ *  - viewport dimensions (w, h),
+ *  - the data,
+ *  - ??
+ */
 const Tree = (props) => {
 	useEffect(
 		() => {
 			d3.select('.tree > *').remove();
 			draw(props);
 		},
-		[ props.shapes.length ]
+		[ props.items.length ]
 	);
 	return <div className="tree" />;
 };
@@ -26,11 +35,17 @@ const draw = function() {
 
 	const tree = d3.tree().size([ height, width ]);
 
-	const diagonal = d3.svg.diagonal().projection(function(d) {
-		return [ d.y, d.x ];
-	});
-
-	// const svg = d3.select('body').append('svg');
+	const diagonal = d3
+		.linkHorizontal()
+		.x(function(d) {
+			return d.x;
+		})
+		.y(function(d) {
+			return d.y;
+		});
+	// const diagonal = d3.linkHorizontal().projection(function(d) {
+	// 	return [ d.y, d.x ];
+	// });
 
 	return {
 		width: width,
