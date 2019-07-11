@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as d3 from 'd3';
 import Tree from './TreeD3';
+import draw from './TreeD3';
 
 const data = {
 	name: 'Eric D',
@@ -33,24 +34,18 @@ class TreeComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			data: null
+			data: data
 		};
 		this.containerRef = React.createRef();
 	}
 
 	componentDidMount() {
-		console.log('mointain');
-		this.setState({ data: data });
+		let container = document.querySelector('.tree-component-container');
+		draw(this.state.data, container);
 	}
 
 	render() {
-		console.log(this.state.data);
-
-		return (
-			<div className="tree" style={styles.container} ref={this.containerRef}>
-				<Tree items={this.state.data} />
-			</div>
-		);
+		return <div className="tree-component-container" style={styles.container} ref={this.containerRef} />;
 	}
 }
 

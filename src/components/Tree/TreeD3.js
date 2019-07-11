@@ -1,230 +1,146 @@
 // https://bl.ocks.org/denisemauldin/2b42a8b38c9b04247a7052c9b503e6e2
-
-import React, { useEffect } from 'react';
 import * as d3 from 'd3';
 
-// const data = {
-// 	name: 'Eric D',
-// 	children: [
-// 		{
-// 			name: 'Erik L',
-// 			children: [
-// 				{
-// 					name: 'Amon',
-// 					children: [ { name: 'Rabert' } ]
-// 				}
-// 			]
-// 		},
-// 		{
-// 			name: 'Isaac J',
-// 			children: [ { name: 'Scrooby' } ]
-// 		}
-// 	]
-// };
+const draw = (data, ref) => {
+	console.log(data);
 
-/**
- * Props:
- *  - viewport dimensions (w, h),
- *  - the data,
- *  - ??
- */
-const Tree = (props) => {
-	console.log(props.items);
-	useEffect(
-		() => {
-			d3.select('.tree > *').remove();
-			// draw(props);
-		},
-		[ JSON.stringify(props.items) ]
-		// [ props.data.length ]
-	);
-	return <div className="tree" />;
-};
+	const width = 833;
+	const dy = width / 6,
+		dx = 10;
+	const treeData = data;
+	const diagonal = d3.linkHorizontal().x((d) => d.y).y((d) => d.x);
+	const margin = { top: 10, right: 120, bottom: 10, left: 40 };
+	const height = 500;
+	const treeMap = d3.tree().size([ height, width ]);
+	let root = d3.hierarchy(treeData, (d) => d.children);
+	console.log(root);
 
-const draw = function(props) {
-	/**
-   *
-   * Needs defining:
-   *  - margin object,
-   *  - width, height,
-   *  - center, focus,
-   *  - duration,
-   *  - node dimensions,
-   *  - root element
-   *  *  *
-   *  - svg node,
-   *  - tree node ("treemap"),
-   *  -
-   *  *  *
-   *  Needed methods:
-   *  - zoom(),
-   *  - collapse(),
-   *  - getText(),
-   *  - wrap() <--
-   */
-	const margin = { top: 20, right: 20, left: 20, bottom: 20 };
-	const width = 833 - margin.right - margin.left,
-		height = 500 - margin.top - margin.bottom;
+	root = treeMap(root);
 
-	let i = 0,
-		duration = 750,
-		root;
+	d3.select(ref).append('svg').attr('height', height).attr('width', width).attr('id', 'svg-viz');
 
-	let svg = d3.select('.tree-component-container').append('svg');
-	svg
-		.attr('width', width)
-		.attr('height', height)
-		.append('g')
-		.attr('transform', `translate(${margin.left},${margin.top})`);
+	const bubbles = treeData;
+	const max = d3.max(bubbles);
+	const radiusScale = d3.scaleSqrt().domain([ 0, max ]).range([ 0, max ]);
 
-	const tree = d3.tree().size([ height, width ]);
-
-	const diagonal = d3
-		.linkHorizontal()
-		.x(function(d) {
-			return d.x;
-		})
-		.y(function(d) {
-			return d.y;
-		});
-
-	root = d3.hierarchy(props.items, function(d) {
-		return d.children;
-	});
-	root.x0 = height / 2;
+	root.x0 = dy / 2;
 	root.y0 = 0;
+	root.descendants().forEach((d, i) => {
+		d.id = i;
+		d._children = d.children;
+		if (d.depth && d.data.name.length !== 7) d.children = null;
+	});
 
-	root.children.forEach(collapse);
+	const svg = d3
+		.create('svg')
+		.attr('viewBox', [ -margin.left, -margin.top, width, dx ])
+		.style('font', '10px sans-serif')
+		.style('user-select', 'none');
 
-	function collapse(d) {
-		if (d.childre) {
-			d._children = d.children;
-			d._children.forEach(collapse);
-			d.children = null;
-		}
-	}
+	const gLink = svg
+		.append('g')
+		.attr('fill', 'none')
+		.attr('stroke', '#555')
+		.attr('stroke-opacity', 0.4)
+		.attr('stroke-width', 1.5);
+
+	const gNode = svg.append('g').attr('cursor', 'pointer').attr('pointer-events', 'all');
 
 	function update(source) {
-		let data = tree(root);
-		let nodes = tree.descendents(),
-			links = data.descendents.slice(1);
+		const duration = d3.event && d3.event.altKey ? 2500 : 250;
+		const nodes = root.descendants().reverse();
+		const links = root.links();
+		treeMap(root);
 
-		nodes.forEach(function(d) {
-			d.y = d.depth * 180;
+		let left = root;
+		let right = root;
+		root.eachBefore((node) => {
+			if (node.x < left.x) left = node;
+			if (node.x > right.x) right = node;
 		});
 
-		let node = svg.selectAll('g.node').data(nodes, function(d) {
-			return d.id || (d.id = ++i);
-		});
+		// Update the nodes…
+		const transition = svg
+			.transition()
+			.duration(duration)
+			.attr('viewBox', [ -margin.left, left.x - margin.top, width, height ])
+			.tween('resize', window.ResizeObserver ? null : () => () => svg.dispatch('toggle'));
 
-		let nodeEnter = node
+		const node = gNode.selectAll('g').data(nodes, (d) => d.id);
+
+		// Enter any new nodes at the parent's previous position.
+		const nodeEnter = node
 			.enter()
 			.append('g')
-			.attr('class', 'node')
-			.attr('transform', function(d) {
-				return `translate(${source.y0}, ${source.x0})`;
-			})
-			.on('click', click);
+			.attr('transform', (d) => `translate(${source.y0},${source.x0})`)
+			.attr('fill-opacity', 0)
+			.attr('stroke-opacity', 0)
+			.on('click', (d) => {
+				d.children = d.children ? null : d._children;
+				update(d);
+			});
+
+		nodeEnter
+			.append('circle')
+			.attr('r', 2.5)
+			.attr('fill', (d) => (d._children ? '#555' : '#999'))
+			.attr('stroke-width', 10);
 
 		nodeEnter
 			.append('text')
-			.attr('dy', '.35em')
-			.attr('x', function(d) {
-				return d.children || d.children ? -13 : 13;
-			})
-			.attr('text-anchor', function(d) {
-				return d.children || d._children ? 'end' : 'start';
-			})
-			.text(function(d) {
-				return d.data.name;
-			});
+			.attr('dy', '0.31em')
+			.attr('x', (d) => (d._children ? -6 : 6))
+			.attr('text-anchor', (d) => (d._children ? 'end' : 'start'))
+			.text((d) => d.data.name)
+			.clone(true)
+			.lower()
+			.attr('stroke-linejoin', 'round')
+			.attr('stroke-width', 3)
+			.attr('stroke', 'white');
 
-		let nodeUpdate = nodeEnter.merge(node);
+		// Transition nodes to their new position.
+		const nodeUpdate = node
+			.merge(nodeEnter)
+			.transition(transition)
+			.attr('transform', (d) => `translate(${d.y},${d.x})`)
+			.attr('fill-opacity', 1)
+			.attr('stroke-opacity', 1);
 
-		nodeUpdate.transition().duration(duration).attr('transform', function(d) {
-			return `translate(${d.y}, ${d.x})`;
-		});
-
-		nodeUpdate
-			.select('circle.node')
-			.attr('r', 20)
-			.style('fill', function(d) {
-				return d._children ? '#ef0772' : '#73ff6d';
-			})
-			.attr('cursor', 'pointer');
-
-		/**
-     *
-     */
-		let nodeExit = node
+		// Transition exiting nodes to the parent's new position.
+		const nodeExit = node
 			.exit()
-			.transition()
-			.duration(duration)
-			.attr('transform', function(d) {
-				return `translate(${source.y},${source.x})`;
-			})
-			.remove();
+			.transition(transition)
+			.remove()
+			.attr('transform', (d) => `translate(${source.y},${source.x})`)
+			.attr('fill-opacity', 0)
+			.attr('stroke-opacity', 0);
 
-		nodeExit.select('circle').attr('r', 1e-6);
+		// Update the links…
+		const link = gLink.selectAll('path').data(links, (d) => d.target.id);
 
-		nodeExit.select('text').style('fill-opacity', 1e-6);
-
-		/**
-     *
-     */
-		let link = svg.selectAll('path.link').data(links, function(d) {
-			return d.id;
+		// Enter any new links at the parent's previous position.
+		const linkEnter = link.enter().append('path').attr('d', (d) => {
+			const o = { x: source.x0, y: source.y0 };
+			return diagonal({ source: o, target: o });
 		});
 
-		let linkEnter = link.enter().insert('path', 'g').attr('class', 'link').attr('d', function(d) {
-			let o = { x: source.x0, y: source.y0 };
-			return diagonal(o, o);
+		// Transition links to their new position.
+		link.merge(linkEnter).transition(transition).attr('d', diagonal);
+
+		// Transition exiting nodes to the parent's new position.
+		link.exit().transition(transition).remove().attr('d', (d) => {
+			const o = { x: source.x, y: source.y };
+			return diagonal({ source: o, target: o });
 		});
 
-		/**
-     *
-     */
-		let linkUpdate = linkEnter.merge(link);
-
-		linkUpdate.transition().duration(duration).attr('d', function(d) {
-			return diagonal(d, d.parent);
-		});
-
-		let linkExit = link
-			.exit()
-			.transition()
-			.duration(duration)
-			.attr('d', function(d) {
-				let o = { x: source.x, y: source.y };
-				return diagonal(o, o);
-			})
-			.remove();
-
-		nodes.forEach(function(d) {
+		// Stash the old positions for transition.
+		root.eachBefore((d) => {
 			d.x0 = d.x;
 			d.y0 = d.y;
 		});
-
-		function diagonal(s, d) {
-			let path = `M ${s.y} ${s.x}
-        C ${(s.y + d.y) / 2} ${s.x},
-        C ${(s.y + d.y) / 2} ${d.x},
-        ${d.y} ${d.x}
-      `;
-			return path;
-		}
-
-		function click(d) {
-			if (d.children) {
-				d._children = d.children;
-				d.children = null;
-			} else {
-				d.children = d._children;
-				d._children = null;
-			}
-			update(d);
-		}
 	}
+	update(data);
+	svg.node();
 };
 
-export default Tree;
+export default draw;
