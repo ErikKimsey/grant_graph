@@ -11,7 +11,15 @@ const data = {
 			children: [
 				{
 					name: 'Amon',
-					children: [ { name: 'Rabert' } ]
+					children: [
+						{ name: 'Rabert' },
+						{
+							name: 'Big Bear',
+							children: [ { name: 'Lil Bear' }, { name: 'Gnarly Bear' }, { name: 'Snuffles' } ]
+						},
+						{ name: 'Ice Bear' },
+						{ name: 'Raccoon' }
+					]
 				}
 			]
 		},
