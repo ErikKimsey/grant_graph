@@ -83,14 +83,14 @@ const draw = (data, ref) => {
 
 		nodeEnter
 			.append('text')
-			.attr('dy', '0.31em')
+			.attr('dy', '0.4em')
 			.attr('x', (d) => (d._children ? -6 : 6))
 			.attr('text-anchor', (d) => (d._children ? 'end' : 'start'))
 			.text((d) => d.data.name)
 			.clone(true)
 			.lower()
 			.attr('stroke-linejoin', 'round')
-			.attr('stroke-width', 3)
+			.attr('stroke-width', 5)
 			.attr('stroke', 'white');
 
 		// Transition nodes to their new position.
