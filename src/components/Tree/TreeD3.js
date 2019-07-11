@@ -2,26 +2,20 @@
 import * as d3 from 'd3';
 
 const draw = (data, ref) => {
-	console.log(data);
+	console.log(ref.clientWidth);
 
-	const width = 833;
-	const dy = width / 6,
-		dx = 10;
 	const treeData = data;
 	const diagonal = d3.linkHorizontal().x((d) => d.y).y((d) => d.x);
-	const margin = { top: 10, right: 120, bottom: 10, left: 40 };
-	const height = 500;
-	const treeMap = d3.tree().size([ height, width ]);
+	const margin = { top: 100, right: 120, bottom: 100, left: 40 };
+	const width = 660 - margin.left - margin.right;
+	const dy = width / 6,
+		dx = 10;
+	const height = 500 - margin.top - margin.bottom;
+	const treeMap = d3.tree().size([ height / 2, width / 2 ]);
 	let root = d3.hierarchy(treeData, (d) => d.children);
 	console.log(root);
 
 	root = treeMap(root);
-
-	d3.select(ref).append('svg').attr('height', height).attr('width', width).attr('id', 'svg-viz');
-
-	const bubbles = treeData;
-	const max = d3.max(bubbles);
-	const radiusScale = d3.scaleSqrt().domain([ 0, max ]).range([ 0, max ]);
 
 	root.x0 = dy / 2;
 	root.y0 = 0;
@@ -32,7 +26,8 @@ const draw = (data, ref) => {
 	});
 
 	const svg = d3
-		.create('svg')
+		.select(ref)
+		.append('svg')
 		.attr('viewBox', [ -margin.left, -margin.top, width, dx ])
 		.style('font', '10px sans-serif')
 		.style('user-select', 'none');
@@ -139,6 +134,8 @@ const draw = (data, ref) => {
 			d.y0 = d.y;
 		});
 	}
+	// console.log(svg.node());
+
 	update(data);
 	svg.node();
 };

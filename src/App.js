@@ -7,7 +7,6 @@ function App() {
 	return (
 		<div className="App">
 			<header className="App-header">
-				<div>d3</div>
 				<TreeComponent />
 			</header>
 		</div>

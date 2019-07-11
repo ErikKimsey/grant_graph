@@ -24,9 +24,8 @@ const data = {
 
 const styles = {
 	container: {
-		width: '833px',
-		height: '500px',
-		border: '5px solid pink'
+		width: '90vw',
+		height: '90vh'
 	}
 };
 
