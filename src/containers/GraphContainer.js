@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import GraphComponent from '../components/GrantComponent/GrantComponent';
 import './graph_container.scss';
 
 export default class GraphContainer extends Component {
@@ -7,12 +8,9 @@ export default class GraphContainer extends Component {
 		this.state = {
 			data: null
 		};
-  }
-  
-  componentDidMount() {
-    
-  }
+	}
 
+	componentDidMount() {}
 
 	render() {
 		return (
@@ -24,6 +22,7 @@ export default class GraphContainer extends Component {
 					</label>
 					<input type="submit" value="Submit" />
 				</form>
+				<GraphComponent />
 			</div>
 		);
 	}
