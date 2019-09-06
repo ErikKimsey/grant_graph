@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import GraphComponent from '../components/GrantComponent/GrantComponent';
 import './graph_container.scss';
+import statsData from '../data/stats_2018.json';
 
 export default class GraphContainer extends Component {
 	constructor(props) {
@@ -10,7 +11,9 @@ export default class GraphContainer extends Component {
 		};
 	}
 
-	componentDidMount() {}
+	componentDidMount() {
+		this.setState({ data: statsData });
+	}
 
 	render() {
 		return (
@@ -22,7 +25,7 @@ export default class GraphContainer extends Component {
 					</label>
 					<input type="submit" value="Submit" />
 				</form>
-				<GraphComponent />
+				{this.state.data && <GraphComponent data={this.state.data} />}
 			</div>
 		);
 	}

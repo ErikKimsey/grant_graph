@@ -8,13 +8,12 @@ class GraphComponent extends Component {
 			data: null
 		};
 		this.containerRef = React.createRef();
-    console.log(draw());
-    
+		console.log(this.props);
 	}
 
 	componentDidMount() {
 		let container = document.querySelector('.grant-component-container');
-		draw(this.state.data, container);
+		draw(this.props.data, container);
 	}
 
 	render() {
