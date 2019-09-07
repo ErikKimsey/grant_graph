@@ -1,36 +1,30 @@
-const PARENT_KEYS = [ 'IC', 'source', 'code', 'received', 'awarded', 'received', 'rate', 'total' ];
-const returnedGrantInfo = [];
-const grantTypeSearch = (input, data) => {
-	// console.log(data['code']);
+import * as FlatToNested from 'flat-to-nested';
 
-	let obj = data['code'];
-	// console.log(obj);
+const PARENT_KEYS = [ 'IC', 'source', 'code', 'awarded', 'received', 'rate', 'total' ];
+export default class GrantGroup {
+	constructor(data, input) {
+		this.data = data;
+		this.input = input;
+		this.code = null;
+		this.source = null;
+		this.awarded = null;
+		this.received = null;
+		this.rate = null;
+		this.total = null;
+		this.codeNums = [];
+		this.allCodes = {};
+  }
+  
+  // 
+	makeAllCodeObj() {
+		this.allCodes = this.data['code'];
+	}
 
-	let codeNums = Object.keys(obj).filter((e, i) => {
-		if (obj[e] === input) {
-			return e;
-		}
-	});
-
-	let allKillaz = PARENT_KEYS.filter((e, i) => {
-		return Object.keys((key) => {
-			// if(data[e]===)
-			console.log(key);
+	makeCodeNums() {
+		Object.keys(obj).filter((e, i) => {
+			if (obj[e] === input) {
+				return e;
+			}
 		});
-	});
-	console.log(allKillaz);
-
-	// console.log(codeNums);
-
-	// let results = codeNums.map((e) => {
-	// 	PARENT_KEYS.forEach((f, i) => {
-	// 		if (f[e]) console.log(f[e]);
-	// 	});
-	// });
-};
-
-// const grantTypeSearch = (input, data) => {
-
-// }
-
-export default grantTypeSearch;
+	}
+}
