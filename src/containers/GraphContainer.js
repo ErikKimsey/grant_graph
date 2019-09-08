@@ -3,6 +3,7 @@ import GraphComponent from '../components/GrantComponent/GrantComponent';
 import './graph_container.scss';
 import statsData from '../data/stats_2018.json';
 import grantTypeSearch from '../utilities/grantTypeSearch';
+import result from '../data/converted';
 
 export default class GraphContainer extends Component {
 	constructor(props) {
@@ -16,6 +17,7 @@ export default class GraphContainer extends Component {
 
 	componentDidMount() {
 		this.setState({ data: statsData });
+		console.log(result());
 	}
 
 	handleInput = (e) => {

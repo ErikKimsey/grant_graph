@@ -13,9 +13,9 @@ export default class GrantGroup {
 		this.total = null;
 		this.codeNums = [];
 		this.allCodes = {};
-  }
-  
-  // 
+	}
+
+	//
 	makeAllCodeObj() {
 		this.allCodes = this.data['code'];
 	}
