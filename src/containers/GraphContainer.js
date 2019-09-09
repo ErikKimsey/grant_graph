@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import GraphComponent from '../components/GrantComponent/GrantComponent';
+import GrantGroup from '../utilities/grantTypeSearch';
 import './graph_container.scss';
 import statsData from '../data/stats_2018.json';
-import grantTypeSearch from '../utilities/grantTypeSearch';
+// import grantTypeSearch from '../utilities/grantTypeSearch';
 import result from '../data/converted';
 
 export default class GraphContainer extends Component {
@@ -11,25 +12,32 @@ export default class GraphContainer extends Component {
 		this.state = {
 			data: null,
 			searchInput: '',
-			searchedGrants: []
+			searchedGrants: [],
+			grantGroup: null
 		};
 	}
 
 	componentDidMount() {
 		this.setState({ data: statsData });
-		console.log(result());
+		this.createGrantGroup(statsData, null);
 	}
 
 	handleInput = (e) => {
-		console.log(e.currentTarget.value);
+		let input = e.currentTarget.value;
 		this.setState({
-			searchInput: e.currentTarget.value
+			searchInput: input
 		});
 	};
 
+	createGrantGroup = (data, input = null) => {
+		this.setState({ grantGroup: new GrantGroup(data, input) });
+	};
+
+	handleSearch = () => {};
+
 	handleSubmit = (e) => {
 		e.preventDefault();
-		grantTypeSearch(this.state.searchInput, this.state.data);
+		this.state.grantGroup.setInput(this.state.searchInput);
 		this.clearInput();
 	};
 

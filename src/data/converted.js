@@ -1,10 +1,10 @@
-const excelToJson = require('convert-excel-to-json');
+// const excelToJson = require('convert-excel-to-json');
 
-const result = excelToJson({
-	sourceFile: './data.xlxs',
-	columnToKey: {
-		'*': '{{columnHeader}}'
-	}
-});
+// const result = excelToJson({
+// 	sourceFile: './data.xlxs',
+// 	columnToKey: {
+// 		'*': '{{columnHeader}}'
+// 	}
+// });
 
-export default result;
+// export default result;

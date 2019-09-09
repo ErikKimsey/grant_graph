@@ -1,5 +1,3 @@
-import * as FlatToNested from 'flat-to-nested';
-
 const PARENT_KEYS = [ 'IC', 'source', 'code', 'awarded', 'received', 'rate', 'total' ];
 export default class GrantGroup {
 	constructor(data, input) {
@@ -16,15 +14,31 @@ export default class GrantGroup {
 	}
 
 	//
-	makeAllCodeObj() {
+	makeAllCodeObj = () => {
 		this.allCodes = this.data['code'];
-	}
+	};
+
+	logStuff = () => {
+		// console.log('this.input');
+		// console.log(this.input);
+		// console.log('this.data');
+		// console.log(this.data);
+	};
+
+	setInput = (input) => {
+		this.input = input;
+		this.logStuff();
+  };
+  
+	getInput() {}
+	setData() {}
+	getData() {}
 
 	makeCodeNums() {
-		Object.keys(obj).filter((e, i) => {
-			if (obj[e] === input) {
-				return e;
-			}
-		});
+		// Object.keys(this.obj).filter((e, i) => {
+		// 	if (obj[e] === input) {
+		// 		return e;
+		// 	}
+		// });
 	}
 }
