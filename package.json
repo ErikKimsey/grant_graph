@@ -7,7 +7,7 @@
     "convert-excel-to-json": "^1.6.1",
     "d3": "^5.9.7",
     "flat-to-nested": "^1.1.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.13.1",
     "pg": "^7.12.1",
     "react": "^16.8.6",
     "react-d3-components": "^0.9.1",
